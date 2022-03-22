@@ -27,3 +27,19 @@ for i in range(N + 1):
     if num not in numbers:
         print(num)
         break
+
+# 백준 17427번 문제 - 약수의 합 2
+N = int(input())
+sum_ = 0
+for i in range(1, N + 1):
+    sum_ += (N // i) * i
+print(sum_)
+
+# 백준 17425번 문제 - 약수의 합
+N = int(input())
+for i in range(N):
+    num = int(input())
+    sum_ = 0
+    for i in range(1, num + 1):
+        sum_ += (n // i) * i
+    print(sum_)
