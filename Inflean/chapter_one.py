@@ -1,4 +1,4 @@
-# # K번째 약수
+# K번째 약수
 n, k = map(int, input().split())
 cnt = 0
 for i in range(1, n + 1):
@@ -10,8 +10,10 @@ for i in range(1, n + 1):
 else:
     print(-1)
 
-# # K 번째 수
-# # list 맨 마지막 슬라이싱 번호는 -1 만큼 된 것 까지 출력한다
+##############################################################################
+
+# K 번째 수
+# list 맨 마지막 슬라이싱 번호는 -1 만큼 된 것 까지 출력한다
 t = int(input())
 for i in range(t):
     n, s, e, k = map(int, input().split())
@@ -20,7 +22,9 @@ for i in range(t):
     numbers.sort()
     print(f"#{i+1}", numbers[k - 1])
 
-# #  K번째 큰 수
+##############################################################################
+
+# K번째 큰 수
 n, k = map(int, input().split())
 card = list(map(int, input().split()))
 sum_value = set()
@@ -31,6 +35,8 @@ for i in range(n):
 sum_value = sorted(list(sum_value), reverse=True)
 print(sum_value[k - 1])
 
+##############################################################################
+
 # 최솟값 구하는 방법
 arr = [5, 3, 7, 8, 2, 5, 2, 6]
 Min = float("inf")
@@ -39,6 +45,8 @@ for i in range(len(arr)):
         Min = arr[i]
 
 print(Min)
+
+##############################################################################
 
 # 대표값
 N = int(input())
@@ -57,6 +65,8 @@ for i in range(len(student)):
 
 print(avg, stud_num)
 
+##############################################################################
+
 # 정다면체
 n, m = map(int, input().split())
 cnt = [0 for _ in range(m + n + 3)]
@@ -68,6 +78,8 @@ for i in range(1, n + 1):
 for idx, val in enumerate(cnt):
     if val == max(cnt):
         print(idx, end=" ")
+
+##############################################################################
 
 # 자릿수의 합
 
@@ -100,6 +112,8 @@ for i in range(n):
         max_value = numbers[i]
 print(max_value)
 
+##############################################################################
+
 # 소수 (에라토스테네스 체)
 n = int(input())
 check = [True for _ in range(n + 1)]
@@ -110,3 +124,64 @@ for i in range(2, n + 1):
         for j in range(i, n + 1, i):
             check[j] = False
 print(cnt)
+
+##############################################################################
+
+# 뒤집은 소수
+def reverse(x):
+    x = str(x)
+    return int(x[::-1])
+
+
+def isPrime(x):
+    if x == 1:
+        return False
+    for i in range(2, x // 2 + 1):
+        if x % i == 0:
+            return False
+        else:
+            return True
+
+
+n = int(input())
+numbers = list(map(int, input().split()))
+for num in numbers:
+    num = reverse(num)
+    if isPrime(num) == True:
+        print(num, end=" ")
+
+##############################################################################
+
+# 주사위 게임
+ppl = int(input())
+res = 0
+for i in range(ppl):
+    dize = list(map(int, input().split()))
+    dize.sort()
+    a, b, c = dize
+    if a == b and b == c:
+        prize = 10000 + a * 1000
+    elif a == b or a == c:
+        prize = 10000 + a * 100
+    elif b == c:
+        prize = 10000 + b * 100
+    else:
+        prize = 1000 + c * 100
+    if prize > res:
+        res = prize
+print(res)
+
+##############################################################################
+
+# 점수계산
+n = int(input())
+check = list(map(int, input().split()))
+grade = 0
+cnt = 0
+for i in check:
+    if i == 1:
+        cnt += 1
+        grade += cnt
+    else:
+        cnt = 0
+print(grade)
