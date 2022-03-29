@@ -236,3 +236,23 @@ if check_sudoku == True:
     print("Yes")
 else:
     print("No")
+
+#############################################################################
+
+# 격자판 회문수
+board = [list(map(int, input().split())) for _ in range(7)]
+cnt = 0
+for i in range(9 // 2):
+    for j in range(7):
+        number_row = str(board[j][i : i + 5])
+        if number_row[::-1] == number_row:
+            cnt += 1
+# 상하로는 slicing이 불가능
+        for k in range(5//2):
+            if board[i+k][j]! = board[i+5-k-1][j]
+            break
+        else:
+            cnt+=1
+
+print(cnt)
+
