@@ -73,9 +73,34 @@ def DFS(L, sum_):
 
 n = int(input())
 num = list(map(int, input().split()))
-check = [0] * (n + 1)
 total = sum(num)
 DFS(0, 0)
 print("No")
 
 #################################################################
+
+# 바둑이 승차
+
+
+def DFS(idx, sum_, tsum):
+    global total
+    if sum_ + (total - tsum) < result:  # 남아있는 값들을 다 더해도 현재 최대값인 result보다 작으면 내려갈 필요x
+        return
+    if sum_ > c:
+        return
+    if idx == n:
+        result = max(result, sum_)
+    else:
+        DFS(idx + 1, sum_ + weight[idx], tsum + weight[idx])
+        DFS(idx + 1, sum_, tsum + weight[idx])
+
+
+c, n = map(int, input().split())
+weight = list()
+for _ in range(n):
+    w = int(input())
+    weight.append(w)
+result = 0
+tsum = sum(weight)
+DFS(0, 0, 0)
+print(result)
