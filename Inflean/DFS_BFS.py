@@ -172,6 +172,229 @@ cnt = 0
 DFS(0, 0)
 print(cnt)
 
-##################################################################
+#################################################################
 
 # 송아지 찾기(BFS)
+
+from collections import deque
+
+
+s, e = map(int, input().split())
+dis = list()
+Max = 10000
+check = [0] * (Max + 1)
+dis = [0] * (Max + 1)  # 0 번 부터
+check[s] = 1
+dis[s] = 0
+dQ = deque()
+dQ.append(s)  # 출발점 입력
+
+while dQ:
+    now = dQ.popleft()  # 부모 값
+    if now == e:
+        break
+    for nex in (now - 1, now + 1, now + 5):  # 차례 차례 튜플값을 탐색
+        if 0 < nex <= Max:
+            if check[nex] == 0:
+                dQ.append(nex)
+                check[nex] = 1
+                dis[nex] = dis[now] + 1
+
+print(dis[e])  # 도착지점에 몇 번 만에 왔는지 프린트 가능
+
+#################################################################
+
+# 사과나무 (BFS)
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+n = int(input())
+apple = [list(map(int, input().split())) for _ in range(n)]
+check = [[0] * n for _ in range(n)]
+s = e = n // 2
+dQ = deque()
+dQ.append((s, e))
+check[s][e] = 1
+total = apple[s][e]
+level = 0
+
+while True:
+    if level == n // 2:
+        break
+    size = len(dQ)
+    for i in range(size):  # 한 level 탐색 완료
+        tmp = dQ.popleft()
+        for j in range(4):
+            x = tmp[0] + dx[j]
+            y = tmp[1] + dy[j]
+            if check[x][y] == 0:
+                total += apple[x][y]
+                check[x][y] = 1
+                dQ.append((x, y))
+    level += 1
+print(total)
+
+#################################################################
+
+# 미로의 최단거리 통로(BFS)
+board = [list(map(int, input().split())) for _ in range(7)]
+dis = [[0] * 7 for _ in range(7)]
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+dQ = deque()
+dQ.append((0, 0))
+board[0][0] = 1
+while dQ:
+    tmp = dQ.popleft()
+    for i in range(4):
+        x = tmp[0] + dx[i]
+        y = tmp[1] + dy[i]
+        if 0 <= x <= 6 and 0 <= y <= 6 and board[x][y] == 0:
+            board[x][y] = 1  # check 효과가 나게 벽으로 만들어버린다
+            dis[x][y] = dis[tmp[0]][tmp[1]] + 1  # 가는 방법 count
+            dQ.append((x, y))
+if dis[6][6] == 0:
+    print(-1)
+else:
+    print(dis[6][6])  # 가는 방법이 어떻게 되는지 count
+
+#################################################################
+
+# 미로탐색(DFS)
+# 최단 거리가 아닌 갈 수 있는 방법이 몇 개인지 count하는 문제
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+
+def DFS(x, y):
+    global cnt
+    if x == 6 and y == 6:
+        cnt += 1
+    else:
+        for i in range(4):
+            xx = x + dx[i]
+            yy = y + dy[i]
+            if 0 <= xx <= 6 and 0 <= yy <= 6 and board[xx][yy] == 0:
+                board[xx][yy] = 1
+                DFS(xx, yy)
+                board[xx][yy] = 0  # 뒤로 백
+
+
+board = [list(map(int, input().split())) for _ in range(7)]
+cnt = 0
+board[0][0] = 1
+DFS(0, 0)
+print(cnt)
+
+#################################################################
+
+# 등산경로(DFS)
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+
+def DFS(x, y):
+    if x == ex and y == ey:  # 도착지점에 돌아오면 count
+        cnt += 1
+    else:
+        for i in range(4):
+            xx = x + dx[i]
+            yy = y + dy[i]
+            if (
+                0 <= xx < n
+                and 0 <= yy < n
+                and board[xx][yy] > board[x][y]
+                and check[xx][yy] == 0
+            ):
+                check[xx][yy] = 1
+                DFS(xx, yy)
+                check[xx][yy] = 0
+
+
+n = int(input())
+board = [[0] * n for _ in range(n)]
+check = [[0] * n for _ in range(n)]
+cnt = 0
+max_ = -2147000
+min_ = 2147000
+for i in range(n):
+    tmp = list(map(int, input().split()))
+    for j in range(n):
+        if tmp[j] < min_:
+            min_ = tmp[j]
+            sx = i
+            sy = j
+        if tmp[j] > max_:
+            max_ = tmp[j]
+            ex = i
+            ey = j
+        board[i][j] = tmp[j]
+check[sx][sy] = 1  # 출발지점 count
+cnt = 0
+DFS(sx, sy)
+print(cnt)
+
+#################################################################
+
+# 단지 번호 붙이기(DFS, BFS)
+
+# DFS로 풀기
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+
+def DFS(x, y):
+    global cnt
+    cnt += 1
+    aprt[x][y] = 0
+    for i in range(4):
+        xx = x + dx[i]
+        yy = y + dy[i]
+        if 0 <= xx < n and 0 <= yy < n and aprt[xx][yy] == 1:
+            DFS(xx, yy)
+
+
+n = int(input())
+aprt = [list(map(int, input())) for _ in range(n)]
+res = []
+for i in range(n):
+    for j in range(n):
+        if aprt[i][j] == 1:  # 여기서 부터 DFS 시작
+            cnt = 0
+            DFS(i, j)
+            res.append(cnt)
+res.sort()
+print(len(res))
+for x in res:
+    print(x)
+
+# BFS로 풀기
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+n = int(input())
+aprt = [list(map(int, input())) for _ in range(n)]
+cnt = 0
+res = []
+Q = deque()
+for i in range(n):
+    for j in range(n):
+        if aprt[i][j] == 1:
+            aprt[i][j] = 0
+            Q.append((i, j))
+            cnt = 1
+
+            # BFS 돌기
+            while Q:  # 주변에 있는 아파트 다 찾기
+                tmp = Q.popleft()
+                for k in range(4):
+                    x = tmp[0] + dx[k]
+                    y = tmp[1] + dy[k]
+                    if x < 0 or x >= n or y < 0 or y >= n or aprt[x][y] == 0:
+                        continue
+                    aprt[x][y] = 0
+                    Q.append((x, y))
+                    cnt += 1
+            res.append(cnt)
+print(len(res))
+for x in res:
+    print(x)
