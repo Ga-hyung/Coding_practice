@@ -428,3 +428,153 @@ for i in range(n):
                         Q.append((x, y))
             cnt += 1
 print(cnt)
+
+################################################################
+
+# 안전영역(DFS)
+
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+
+def DFS(x, y, h):
+    check[x][y] = 1
+    for i in range(4):
+        xx = x + dx[i]
+        yy = y + dy[i]
+        if 0 <= xx < n and 0 <= yy < n and check[xx][yy] == 0 and board[xx][yy] > h:
+            DFS(xx, yy, h)
+
+
+n = int(input())
+board = [list(map(int, input().split())) for _ in range(n)]
+cnt = 0
+res = 0  # 안전지대 갯수
+
+for h in range(100):  # 높이 계속 for 문 돌기
+    check = [[0] * n for _ in range(n)]
+    cnt = 0
+    for i in range(n):
+        for j in range(n):
+            if check[i][j] == 0 and board[i][j] > h:
+                cnt += 1
+                DFS(i, j, h)
+    res = max(res, cnt)
+
+    if cnt == 0:  # 제일 큰 높이를 돌고 나서 cnt=0일 때 break하면 된다.
+        break
+
+print(res)
+
+#################################################################
+
+# 토마토(BFS)
+
+from collections import deque
+
+dx = [-1, 0, 1, 0]
+dy = [0, 1, 0, -1]
+
+n, m = map(int, input().split())
+tomato = [list(map(int, input().split())) for _ in range(m)]
+day = [[0] * n for _ in range(m)]
+Q = deque()
+
+for i in range(m):
+    for j in range(n):
+        if tomato[i][j] == 1:
+            Q.append((i, j))
+
+
+while Q:
+    tmp = Q.popleft()
+    for k in range(4):
+        x = tmp[0] + dx[k]
+        y = tmp[1] + dy[k]
+        if 0 <= x < m and 0 <= y < n and tomato[x][y] == 0:
+            tomato[x][y] = 1
+            day[x][y] = day[tmp[0]][tmp[1]] + 1
+            Q.append((x, y))
+
+flag = 1
+for i in range(m):
+    for j in range(n):
+        if tomato[i][j] == 0:
+            flag = 0
+
+result = 0
+if flag == 1:
+    for i in range(m):
+        for j in range(n):
+            result = max(result, day[i][j])
+    print(result)
+else:
+    print(-1)
+
+#################################################################
+
+# 사다리 타기(DFS)
+
+
+def DFS(x, y):
+    check[x][y] = 1
+    if x == 0:
+        print(y)
+    else:
+        if y - 1 >= 0 and board[x][y - 1] == 1 and check[x][y - 1] == 0:
+            DFS(x, y - 1)
+        elif y + 1 < 10 and board[x][y + 1] == 1 and check[x][y + 1] == 0:
+            DFS(x, y + 1)
+        else:
+            DFS(x - 1, y)
+
+
+board = [list(map(int, input().split())) for _ in range(10)]
+check = [[0] * 10 for _ in range(10)]
+
+for i in range(10):
+    if board[9][i] == 2:
+        DFS(9, i)
+
+#################################################################
+
+# 피자 배달 거리(삼성 SW역량평가 기출 문제: DFS 활용)
+
+
+def DFS(L, s):  # 조합찾아가기
+    global res
+    if L == m:
+        total = 0  # 도시피자 배달거리
+        for j in range(len(hs)):  # 집 마다 접근
+            x1 = hs[j][0]
+            y1 = hs[j][1]
+            dis = 21470000
+            for x in check:  # 피자집마다 접근
+                x2 = pz[x][0]
+                y2 = pz[x][1]
+                dis = min(dis, abs(x1 - x2) + abs(y1 - y2))
+            total += dis
+        if total < res:
+            res = total
+    else:
+        for i in range(s, len(pz)):
+            check[L] = i
+            DFS(L + 1, i + 1)
+
+
+n, m = map(int, input().split())
+city = [list(map(int, input().split())) for _ in range(n)]
+check = [0] * m  # 피자집 조합의 경우의 수를 저장하기
+hs = list()
+pz = list()
+res = 21470000
+for i in range(n):
+    for j in range(n):
+        if city[i][j] == 2:
+            pz.append((i, j))
+        elif city[i][j] == 1:
+            hs.append((i, j))
+
+DFS(0, 0)
+print(res)
