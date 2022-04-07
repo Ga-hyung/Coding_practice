@@ -229,4 +229,96 @@ for i in range(n):
         dy[j] = max(dy[j], dy[j - pt] + ps)
 print(dy[l])
 
+################################################################
+
+# 플로이드 와샬 알고리즘(그래프 알고리즘)
+
+
+n, m = map(int, input().split())
+dis = [[5000] * (n + 1) for _ in range(n + 1)]
+
+for i in range(1, n + 1):
+    dis[i][i] = 0
+
+for i in range(m):
+    n1, n2, w = map(int, input().split())
+    dis[n1][n2] = w  # 직행 했을 때 초기 거리
+
+for k in range(1, n + 1):  # i -> k -> j 에 간다고 가정했을 때 계산
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j])
+
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        if dis[i][j] == 5000:
+            print("M", end=" ")
+        else:
+            print(dis[i][j], end=" ")
+            print()
+
+################################################################
+
+# 회장뽑기(플로이드-와샬 응용)
+
+n = int(input())
+dis = [[100] * (n + 1) for _ in range(n + 1)]
+res = [0] * (n + 1)
+for i in range(1, n + 1):
+    dis[i][i] = 0
+while True:
+    p1, p2 = map(int, input().split())
+    if p1 == -1 and p2 == -1:
+        break
+    dis[p1][p2] = 1
+    dis[p2][p1] = 1  # Undirected Graph 이므로
+
+for k in range(1, n + 1):
+    for i in range(1, n + 1):
+        for j in range(1, n + 1):
+            dis[i][j] = min(dis[i][j], dis[i][k] + dis[k][j])
+
+score = 100
+for i in range(1, n + 1):
+    for j in range(1, n + 1):
+        res[i] = max(res[i], dis[i][j])
+    score = min(score, res[i])
+
+# 회장 후보들 모으기
+out = []
+for i in range(1, n + 1):
+    if res[i] == score:
+        out.append(i)
+
+print("%d %d" % (score, len(out)))
+for x in out:
+    print(x, end=" ")
+
 #################################################################
+
+# 위상정렬(그래프)
+
+from collections import deque
+
+n, m = map(int, input().split())
+degree = [0] * (n + 1)
+graph = [[0] * (n + 1) for _ in range(n + 1)]
+dQ = deque()
+
+for _ in range(m):
+    n1, n2 = map(int, input().split())
+    degree[n2] += 1
+    graph[n1][n2] = 1
+
+for i in range(1, n + 1):
+    if degree[i] == 0:
+        dQ.append(i)
+
+while dQ:
+    x = dQ.popleft()  # 작업 진행
+    print(x, end=" ")
+    for i in range(1, n + 1):
+        if graph[x][i] == 1:
+            degree[i] -= 1
+            if degree[i] == 0:
+                dQ.append(i)
