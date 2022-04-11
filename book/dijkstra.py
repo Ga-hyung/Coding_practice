@@ -12,7 +12,6 @@ for _ in range(m):
 
 def dijkstra(start):
     q = []
-    heapq.heappush(q, (0, start))
     dis[start] = 0
     while q:
         # 가장 최단 거리가 짧은 노드에 대한 정보 꺼내기
@@ -21,7 +20,7 @@ def dijkstra(start):
             continue
         # 현재 노드와 연결된 다른 인접한 노드들을 확인
         for i in graph[now]:
-            cost = dist + i[1]
+            cost = dist + i[1] #i[0]: 이웃 노드,  i[1] : 가는데 까지 걸리는 거리
             if cost < dis[i[0]]:
                 dis[i[0]] = cost
                 heapq.heappush(q, (cost, i[0]))
