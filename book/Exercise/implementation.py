@@ -89,3 +89,153 @@ for r in range(4):
             for i in range(m):  # 열쇠 다시 빼내기
                 for j in range(m):
                     new_lock[x + i][y + j] -= key[i][j]
+
+# 뱀
+n, k = 6, 3
+apple = [(3, 4), (2, 5), (5, 3)]
+l = 3
+info = [(3, "D"), (15, "L"), (17, "D")]
+board = [[0] * (n + 1) for _ in range(n + 1)]
+for x, y in apple:
+    board[x - 1][y - 1] = 1
+# 동, 남, 서, 북 (동쪽부터 시작)
+dx = [0, 1, 0, -1]
+dy = [1, 0, -1, 0]
+
+
+def turn(direction, c):
+    if c == "L":
+        direction = (direction - 1) % 4
+    else:
+        direction = (direction + 1) % 4
+    return direction
+
+
+def simulate():
+    x, y = 1, 1
+    board[x][y] = 2  # 뱀이 있는 위치를 2로 표시
+    time = 0
+    direction = 0  # 처음에 동쪽을 보고 있을 떄
+    index = 0  # 다음 회전할 정보
+    q = [(x, y)]  # 뱀이 차지하고 있는 위치 정보(꼬리가 앞쪽)
+    while True:
+        nx = x + dx[direction]
+        ny = y + dy[direction]
+        # 맵 범위 안에 있는 뱀의 몸통이 없는 위치라면
+        if 1 <= nx and nx <= n and 1 <= ny and ny <= n and board[nx][ny] != 2:
+            # 사과가 없다면 이동 후 꼬리 제거
+            if board[nx][ny] == 0:
+                board[nx][ny] = 2
+                q.append((nx, ny))
+                px, py = q.pop(0)
+                board[px][py] = 0  # 한 칸 이동 한 후, 꼬리 있는 부분 지우기
+            # 사과가 있다면 이동 후 꼬리 그대로 두기
+            if board[nx][ny] == 1:
+                board[nx][ny] = 2
+                q.append((nx, ny))
+        # 벽이나 뱀의 몸통과 부딪혔다면
+        else:
+            time += 1
+            break
+        x, y = nx, ny
+        time += 1
+        if index < 1 and time == info[index][0]:  # 회전할 시간인 경우 회전
+            direction = turn(direction, info[index][1])
+            index += 1
+    return time
+
+
+print(simulate())
+
+# 기둥과 보 설치
+n = 5
+build_frame = [
+    [0, 0, 0, 1],
+    [2, 0, 0, 1],
+    [4, 0, 0, 1],
+    [0, 1, 1, 1],
+    [1, 1, 1, 1],
+    [2, 1, 1, 1],
+    [3, 1, 1, 1],
+    [2, 0, 0, 0],
+    [1, 1, 1, 0],
+    [2, 2, 0, 1],
+]
+
+
+def possible(answer):
+    for x, y, a in answer:
+        if a == 0:  # 설치된 것이 기둥 인 경우
+            # 바닥 위 혹은 보의 한쪽 끝부분 위 혹은 다른 기둥 위라면 정상
+            if (
+                y == 0
+                or [x - 1, y, 1] in answer
+                or [x, y, 1] in answer
+                or [x, y - 1, 0] in answer
+            ):
+                continue
+            return False
+        elif a == 1:  # 설치되는 것이 보인 경우
+            if (
+                [x, y - 1, 0] in answer
+                or [x + 1, y - 1, 0] in answer
+                or ([x - 1, y, 1] in answer and [x + 1, y, 1] in answer)
+            ):
+                continue
+            return False
+    return True
+
+
+result = []
+for x, y, a, b in build_frame:
+    if b == 1:
+        result.append([x, y, a])
+        if not possible(result):
+            result.remove([x, y, a])
+    else:
+        result.remove([x, y, a])
+        if not possible(result):
+            result.append([x, y, a])
+
+result.sort()
+print(result)
+
+# 치킨 배달
+from itertools import combinations
+
+n, m = 5, 2
+city = [
+    [0, 2, 0, 1, 0],
+    [1, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0],
+    [2, 0, 0, 1, 1],
+    [2, 2, 0, 1, 2],
+]
+house = []
+chicken = []
+for i in range(n):
+    for j in range(n):
+        if city[i][j] == 1:
+            house.append((i, j))
+        elif city[i][j] == 2:
+            chicken.append((i, j))
+
+candidate = list(combinations(chicken, m))
+
+
+def get_sum(candidate):
+    total = 0
+    for i in range(len(house)):
+        length = 99999
+        x, y = house[i][0], house[i][1]
+        for nx, ny in candidate:
+            l = abs(x - nx) + abs(y - ny)
+            length = min(l, length)
+        total += length
+    return total
+
+
+result = 1e9
+for c in candidate:
+    result = min(result, get_sum(c))
+print(result)
